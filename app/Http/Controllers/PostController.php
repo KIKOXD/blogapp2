@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post; // Pastikan model Post sudah diimpor
 
 class PostController extends Controller
 {
     // Tampilkan halaman posts
     public function index()
     {
-        return view('admin.posts.index');
+        // Load semua postingan dari database
+        $posts = Post::all(); 
+        return view('admin.posts.index', compact('posts'));
     }
 
     // Fungsi untuk membuat post baru
@@ -21,15 +24,24 @@ class PostController extends Controller
     // Fungsi untuk menyimpan post baru
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|max:255',
+        $request->validate([
+            'title' => 'required|string|max:255',
             'description' => 'required',
             'image' => 'required|image|max:2048',
         ]);
 
-        // Simpan logika penyimpanan post ke database
-        // Contoh:
-        // Post::create($validated);
+        // Simpan postingan ke database
+        $post = new Post();
+        $post->title = $request->title;
+        $post->description = $request->description;
+
+        // Simpan gambar
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('uploads', 'public');
+            $post->image = $imagePath;
+        }
+
+        $post->save();
 
         return redirect()->route('admin.posts.index')->with('success', 'Post berhasil dibuat!');
     }

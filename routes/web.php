@@ -5,8 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PostController;
 
-
-
 // Landing Page untuk Customer
 Route::get('/', function () {
     return view('customer.index');
@@ -24,14 +22,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Admin Routes (Proteksi Auth)
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/posts', [AdminController::class, 'posts'])->name('admin.posts');
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
-});
 
-// Menu Postingan
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/posts', [PostController::class, 'index'])->name('admin.posts.index');
-    Route::get('/admin/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
-    Route::post('/admin/posts', [PostController::class, 'store'])->name('admin.posts.store');
+    // Menu Postingan
+    Route::prefix('posts')->group(function () {
+        Route::get('/', [PostController::class, 'index'])->name('admin.posts.index');
+        Route::get('/create', [PostController::class, 'create'])->name('admin.posts.create');
+        Route::post('/', [PostController::class, 'store'])->name('admin.posts.store');
+        Route::get('/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
+        Route::put('/{id}', [PostController::class, 'update'])->name('admin.posts.update');
+        Route::delete('/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+    });
 });
