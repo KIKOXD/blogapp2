@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="page-title">Daftar Postingan</h1>
-    
+
     <!-- Tombol Create Post -->
     <div class="create-post-btn" style="text-align: right; margin-bottom: 20px;">
         <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ Create Post</a>
@@ -22,30 +22,31 @@
         </thead>
         <tbody>
             @foreach ($posts as $index => $post)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td class="image-column">
-                    @if ($post->image)
-                        <a href="#" class="image-popup" data-image="{{ asset('storage/' . $post->image) }}">
-                            <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="post-image">
-                        </a>
-                    @else
-                        <span>Tidak ada gambar</span>
-                    @endif
-                </td>
-                <td>{{ $post->title }}</td>
-                <td>{{ \Illuminate\Support\Str::limit($post->description, 50, '...') }}</td>
-                <td>
-                    <div class="action-buttons" style="display: flex; gap: 10px;">
-                        <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-edit">Edit</a>
-                        <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="inline-form">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus postingan ini?')">Hapus</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td class="image-column">
+                        @if ($post->image)
+                            <a href="#" class="image-popup" data-image="{{ asset('storage/' . $post->image) }}">
+                                <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}" class="post-image">
+                            </a>
+                        @else
+                            <span>Tidak ada gambar</span>
+                        @endif
+                    </td>
+                    <td>{{ $post->title }}</td>
+                    <td>{!! \Illuminate\Support\Str::limit(strip_tags($post->description), 50, '...') !!}</td>
+                    <td>
+                        <div class="action-buttons" style="display: flex; gap: 10px;">
+                            <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-edit">Edit</a>
+                            <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" class="inline-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-delete"
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus postingan ini?')">Hapus</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>

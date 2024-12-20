@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,25 +14,26 @@
     <script src="https://cdn.ckeditor.com/4.19.1/standard/ckeditor.js"></script>
 
 </head>
+
 <body>
-        <div class="sidebar">
-            <div class="logo">
+    <div class="sidebar">
+        <div class="logo">
             <img src="{{ asset('images/GIF-LOGO-MAHASLOT.gif') }}" alt="Admin Logo">
-            </div>
-            <ul>
+        </div>
+        <ul>
             <li><a href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li><a href="{{ route('admin.posts') }}"><i class="fas fa-edit"></i> Posting</a></li>
             <li><a href="{{ route('admin.users') }}"><i class="fas fa-users"></i> Users</a></li>
             <li><a href="{{ route('admin.settings') }}"><i class="fas fa-cogs"></i> Setting</a></li>
-            </ul>
-            <div class="logout">
+        </ul>
+        <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </form>
-            </div>
         </div>
-        
+    </div>
+
 
     <!-- Navbar -->
     <div class="navbar">
@@ -51,4 +53,5 @@
         @yield('content')
     </div>
 </body>
+
 </html>

@@ -23,13 +23,21 @@
             <input type="file" name="image" id="image" class="form-control" required>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-success">Save Post</button>
+        <!-- Button Group -->
+        <div class="button-group">
+            <button type="submit" class="btn btn-success">Save Post</button>
+            <a href="{{ route('admin.posts.index') }}" class="btn btn-cancel">Cancel</a>
+        </div>
     </form>
 </div>
 
 <!-- CKEditor Script -->
+<script src="https://cdn.ckeditor.com/4.19.1/standard/ckeditor.js"></script>
 <script>
-    CKEDITOR.replace('description');
+    CKEDITOR.replace('description', {
+        height: 300,
+        removePlugins: 'elementspath',
+        removeButtons: 'Source,Subscript,Superscript,Anchor,Styles,Specialchar'
+    });
 </script>
 @endsection

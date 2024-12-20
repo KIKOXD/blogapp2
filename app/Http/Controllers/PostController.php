@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -47,5 +48,65 @@ class PostController extends Controller
 
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil dibuat!');
+    }
+
+    // Fungsi untuk menampilkan form edit
+    public function edit($id)
+    {
+        $post = Post::findOrFail($id);
+        return view('admin.posts.edit', compact('post'));
+    }
+
+    // Fungsi untuk mengupdate post
+    public function update(Request $request, $id)
+    {
+        // Validasi input
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        // Ambil post yang akan diupdate
+        $post = Post::findOrFail($id);
+
+        // Update data
+        $post->title = $request->input('title');
+        $post->description = $request->input('description');
+
+        // Update gambar jika ada
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada
+            if ($post->image && Storage::disk('public')->exists($post->image)) {
+                Storage::disk('public')->delete($post->image);
+            }
+
+            // Upload gambar baru
+            $path = $request->file('image')->store('images', 'public');
+            $post->image = $path;
+        }
+
+        // Simpan perubahan
+        $post->save();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil diupdate!');
+    }
+
+    public function destroy($id)
+    {
+        // Cari post berdasarkan ID
+        $post = Post::findOrFail($id);
+
+        // Hapus gambar dari storage jika ada
+        if ($post->image && Storage::disk('public')->exists($post->image)) {
+            Storage::disk('public')->delete($post->image);
+        }
+
+        // Hapus post dari database
+        $post->delete();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil dihapus!');
     }
 }
