@@ -3,31 +3,35 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PostController;
 
 
+
+// Landing Page untuk Customer
 Route::get('/', function () {
     return view('customer.index');
 })->name('home');
 
-// Routes untuk Login
+// Auth Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
-// Routes untuk Register
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-// Route untuk Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Proteksi Dashboard
-Route::middleware('auth')->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard'); // Sesuaikan dengan view dashboard
-    })->name('admin.dashboard');
+// Admin Routes (Proteksi Auth)
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/posts', [AdminController::class, 'posts'])->name('admin.posts');
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
 });
 
-// Admin Dashboard
+// Menu Postingan
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/posts', [PostController::class, 'index'])->name('admin.posts.index');
+    Route::get('/admin/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
+    Route::post('/admin/posts', [PostController::class, 'store'])->name('admin.posts.store');
 });

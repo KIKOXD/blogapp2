@@ -4,51 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="bg-blue-900 text-white w-64 flex flex-col shadow-md">
-            <div class="p-5 text-center">
-                <img src="{{ asset('images/logo.gif') }}" alt="Admin Panel Logo" class="mx-auto w-32 h-auto rounded-full">
-            </div>
-            <nav class="flex-1">
-                <ul class="space-y-2 px-4">
-                    <li>
-                        <a href="{{ route('admin.dashboard') }}" class="block py-2 px-3 rounded hover:bg-blue-700 transition">
-                            <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="block py-2 px-3 rounded hover:bg-blue-700 transition">
-                            <i class="fas fa-users mr-2"></i> Users
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="block py-2 px-3 rounded hover:bg-blue-700 transition">
-                            <i class="fas fa-cogs mr-2"></i> Settings
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="p-4">
-                <a href="{{ route('logout') }}" class="block py-2 px-3 text-center rounded bg-red-600 hover:bg-red-500 transition">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </a>
-            </div>
-        </div>
+    <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
 
-        <!-- Main Content -->
-        <div class="flex-1 bg-gray-50">
-            <header class="bg-white shadow-md p-4">
-                <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-            </header>
-            <main class="p-6">
-                @yield('content')
-            </main>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/4.19.1/standard/ckeditor.js"></script>
+
+</head>
+<body>
+        <div class="sidebar">
+            <div class="logo">
+            <img src="{{ asset('images/GIF-LOGO-MAHASLOT.gif') }}" alt="Admin Logo">
+            </div>
+            <ul>
+            <li><a href="{{ route('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{{ route('admin.posts') }}"><i class="fas fa-edit"></i> Posting</a></li>
+            <li><a href="{{ route('admin.users') }}"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="{{ route('admin.settings') }}"><i class="fas fa-cogs"></i> Setting</a></li>
+            </ul>
+            <div class="logout">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </form>
+            </div>
         </div>
+        
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1 class="navbar-title">Dashboard</h1>
+        <div class="profile">
+            <i class="fas fa-user-circle profile-icon"></i>
+            <span class="profile-name">{{ Auth::user()->name }}</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        @yield('content')
     </div>
 </body>
 </html>
