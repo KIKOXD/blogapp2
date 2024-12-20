@@ -1,0 +1,120 @@
+/* Global Styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f0f0f0;
+    /* Background abu-abu */
+    color: #333;
+    /* Warna teks */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
+}
+
+/* Header */
+.header {
+    background-color: #0044cc;
+    /* Warna biru */
+    color: white;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.search-container {
+    width: 300px;
+}
+
+.search-box {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Main Content */
+.main-content {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.main-title {
+    font-size: 24px;
+    color: #0044cc;
+    /* Warna biru */
+    margin-bottom: 20px;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 10px;
+}
+
+.card-image img {
+    width: 100%;
+    height: auto;
+}
+
+.card-title {
+    font-size: 18px;
+    color: #0044cc;
+    /* Warna biru */
+}
+
+.card-text {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.card-detail {
+    font-size: 14px;
+    color: #666;
+}
+
+.read-more {
+    display: inline-block;
+    background-color: #0044cc;
+    /* Warna biru */
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.read-more:hover {
+    background-color: #0056e0;
+    /* Warna biru lebih terang */
+}
+
+/* Footer */
+.footer {
+    background-color: #0044cc;
+    /* Warna biru */
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+}
