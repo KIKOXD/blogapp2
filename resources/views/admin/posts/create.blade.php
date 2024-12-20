@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Create Post</h1>
+    <h1 class="page-title">Create Post</h1>
     <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <!-- Input Title -->
@@ -30,6 +30,6 @@
 
 <!-- CKEditor Script -->
 <script>
-    CKEDITOR.replace('description'); // Mengaktifkan editor di kolom deskripsi
+    CKEDITOR.replace('description');
 </script>
 @endsection
