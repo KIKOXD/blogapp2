@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Tambahkan jika perlu */
+body {
+    font-family: "Inter", sans-serif;
+}
