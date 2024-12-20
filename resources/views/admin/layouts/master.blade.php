@@ -42,9 +42,9 @@
         </div>
     </div>
 
-    <div class="sidebar">
+    {{-- <div class="sidebar">
         <a href="{{ route('admin.posts.index') }}">Posts</a>
-    </div>
+    </div> --}}
 
     <!-- Main Content -->
     <div class="main-content">

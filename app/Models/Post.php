@@ -16,7 +16,9 @@ class Post extends Model
      */
     protected $fillable = [
         'title',
-        'body',
+        'description', // Pastikan ini ada di tabel database
+        'image',       // Pastikan ini ada di tabel database
+        'user_id',     // Jika ada relasi ke pengguna
     ];
 
     /**
