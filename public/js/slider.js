@@ -3,19 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const slides = document.querySelectorAll('.slide');
     const totalSlides = slides.length;
 
-    console.log('Total Slides:', totalSlides);
-
     function showNextSlide() {
-        slides.forEach((slide, index) => {
-            slide.classList.remove('active');
-            console.log('Removing active from:', index);
-        });
-
+        slides.forEach((slide) => slide.classList.remove('active'));
         slides[currentIndex].classList.add('active');
-        console.log('Adding active to:', currentIndex);
-
         currentIndex = (currentIndex + 1) % totalSlides;
     }
 
     setInterval(showNextSlide, 3000);
+    slides[currentIndex].classList.add('active'); // Tampilkan slide pertama
 });

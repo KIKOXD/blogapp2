@@ -37,20 +37,21 @@
             <div class="slide active">
                 <img src="{{ asset('images/1.jpg') }}" alt="Slide 1">
             </div>
-            <div class="slide active">
+            <div class="slide">
                 <img src="{{ asset('images/2.jpg') }}" alt="Slide 2">
             </div>
-            <div class="slide active">
+            <div class="slide">
                 <img src="{{ asset('images/3.jpg') }}" alt="Slide 3">
             </div>
-            <div class="slide active">
+            {{-- <div class="slide">
                 <img src="{{ asset('images/4.jpg') }}" alt="Slide 4">
             </div>
-            <div class="slide active">
+            <div class="slide">
                 <img src="{{ asset('images/5.jpg') }}" alt="Slide 5">
-            </div>
+            </div> --}}
         </div>
     </section>
+
 
 
     <main class="main-content">
@@ -77,5 +78,6 @@
     </footer>
 
     <script src="{{ asset('js/slider.js') }}"></script>
+
 </body>
 </html>
