@@ -454,3 +454,8 @@ body {
     background-color: #003f7f;
     color: white;
 }
+
+.post-table tr:hover {
+    background-color: #f9fafb;
+    transition: background-color 0.2s ease;
+}

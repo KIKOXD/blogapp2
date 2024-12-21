@@ -9,33 +9,46 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     // Tampilkan halaman posts
-    public function index()
+    public function index(Request $request)
     {
-        $query = Post::query();
-        
+        $query = Post::with('user')->latest();
+
+        // Filter berdasarkan author
+        if ($request->has('author') && $request->author !== '') {
+            $query->where('user_id', $request->author);
+        }
+
+        // Filter berdasarkan status
+        if ($request->has('status') && $request->status !== '') {
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        // Filter berdasarkan tanggal
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
         // Search functionality
-        if (request('search')) {
-            $search = request('search');
+        if ($request->has('search')) {
+            $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%');
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        
-        // Date filter
-        if (request('start_date')) {
-            $query->whereDate('created_at', '>=', request('start_date'));
-        }
-        
-        if (request('end_date')) {
-            $query->whereDate('created_at', '<=', request('end_date'));
-        }
-        
-        $posts = $query->with('user')
-                       ->latest()
-                       ->paginate(10);
-        
-        return view('admin.posts.index', compact('posts'));
+
+        $totalPosts = $query->count();
+        $posts = $query->paginate(10)->withQueryString();
+        $authors = \App\Models\User::all();
+
+        return view('admin.posts.index', compact('posts', 'authors', 'totalPosts'));
     }
 
     // Tambahkan method show setelah method index
@@ -77,7 +90,10 @@ class PostController extends Controller
         $post->save();
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('admin.posts.index')->with('success', 'Postingan berhasil dibuat!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Postingan berhasil dibuat!'
+        ]);
     }
 
     // Fungsi untuk menampilkan form edit
@@ -120,7 +136,10 @@ class PostController extends Controller
         $post->save();
 
         // Redirect dengan pesan sukses
-        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil diupdate!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Postingan berhasil diperbarui!'
+        ]);
     }
 
     public function destroy($id)
@@ -137,8 +156,43 @@ class PostController extends Controller
         $post->delete();
 
         // Redirect dengan pesan sukses
-        return redirect()->route('admin.posts.index')->with('success', 'Post berhasil dihapus!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Postingan berhasil dihapus!'
+        ]);
     }
 
-    
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'posts' => 'required|array',
+            'posts.*' => 'exists:posts,id'
+        ]);
+
+        $posts = Post::whereIn('id', $request->posts)->get();
+
+        foreach ($posts as $post) {
+            // Delete image if exists
+            if ($post->image && Storage::disk('public')->exists($post->image)) {
+                Storage::disk('public')->delete($post->image);
+            }
+            
+            // Delete post
+            $post->delete();
+        }
+
+        return redirect()->route('admin.posts.index')
+            ->with('success', count($request->posts) . ' postingan berhasil dihapus!');
+    }
+
+    // Add new method for toggle status
+    public function toggleStatus($id)
+    {
+        $post = Post::findOrFail($id);
+        $post->is_active = !$post->is_active;
+        $post->save();
+        
+        return response()->json(['success' => true]);
+    }
+
 }

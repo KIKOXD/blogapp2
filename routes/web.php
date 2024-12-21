@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Settings
     Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
+
+    // Bulk Actions
+    Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
+
+    Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
+
+    Route::patch('/posts/bulk-activate', [PostController::class, 'bulkActivate'])->name('posts.bulk-activate');
+    Route::patch('/posts/bulk-deactivate', [PostController::class, 'bulkDeactivate'])->name('posts.bulk-deactivate');
 });
 
 // Fallback Post Route
@@ -51,4 +60,26 @@ Route::get('/posts', [PostController::class, 'index'])->name('admin.posts');
 //     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 //     // ... route lainnya
 // });
+
+Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])
+     ->name('posts.toggle-status');
+
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+Route::patch('/admin/posts/bulk-activate', [PostController::class, 'bulkActivate'])->name('admin.posts.bulk-activate');
+Route::patch('/admin/posts/bulk-deactivate', [PostController::class, 'bulkDeactivate'])->name('admin.posts.bulk-deactivate');
+
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    // Bulk actions
+    Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::patch('posts/bulk-activate', [PostController::class, 'bulkActivate'])->name('posts.bulk-activate');
+        Route::patch('posts/bulk-deactivate', [PostController::class, 'bulkDeactivate'])->name('posts.bulk-deactivate');
+        Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
+        Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
+    });
+});
 

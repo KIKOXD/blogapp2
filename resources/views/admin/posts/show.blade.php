@@ -22,7 +22,8 @@
             <div class="mb-6">
                 <img src="{{ asset('storage/' . $post->image) }}" 
                      alt="{{ $post->title }}" 
-                     class="max-w-2xl rounded-lg shadow-md">
+                     class="max-w-2xl rounded-lg shadow-md"
+                     onclick="openModal(this.src, this.alt)">
             </div>
         @endif
 
@@ -48,3 +49,10 @@
     </div>
 </div>
 @endsection 
+
+<script>
+function openModal(imageSrc, imageAlt) {
+    // ... kode existing ...
+    showNotification('Gambar sedang ditampilkan');
+}
+</script> 

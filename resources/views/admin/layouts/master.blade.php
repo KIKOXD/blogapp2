@@ -8,16 +8,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body class="bg-gray-100">
+    <!-- Notification Container -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+    
     <div x-data="{ sidebarOpen: true }" class="min-h-screen flex">
         <!-- Sidebar -->
         <div :class="{'w-64': sidebarOpen, 'w-20': !sidebarOpen}" 
              class="bg-gray-800 text-white transition-all duration-300 ease-in-out">
             <div class="p-4">
                 <div class="flex items-center justify-between">
-                    <img src="{{ asset('images/GIF-LOGO-MAHASLOT.png') }}" alt="Logo" class="h-8" 
+                    <img src="{{ asset('images/GIF-LOGO-MAHASLOT.gif') }}" alt="Logo" class="h-8" 
                          :class="{'hidden': !sidebarOpen}">
                     <button @click="sidebarOpen = !sidebarOpen" class="text-white">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,6 +99,29 @@
             </main>
         </div>
     </div>
+    @stack('scripts')
+    <script>
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `transform transition-all duration-300 ease-out scale-95 opacity-0 
+            ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} 
+            text-white px-6 py-3 rounded-lg shadow-lg mb-4`;
+        notification.textContent = message;
+        
+        const container = document.getElementById('notification-container');
+        container.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.remove('scale-95', 'opacity-0');
+            notification.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    </script>
 </body>
 
 </html>
