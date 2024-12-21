@@ -11,9 +11,38 @@ class PostController extends Controller
     // Tampilkan halaman posts
     public function index()
     {
-        // Load semua postingan dari database
-        $posts = Post::all();
+        $query = Post::query();
+        
+        // Search functionality
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+        
+        // Date filter
+        if (request('start_date')) {
+            $query->whereDate('created_at', '>=', request('start_date'));
+        }
+        
+        if (request('end_date')) {
+            $query->whereDate('created_at', '<=', request('end_date'));
+        }
+        
+        $posts = $query->with('user')
+                       ->latest()
+                       ->paginate(10);
+        
         return view('admin.posts.index', compact('posts'));
+    }
+
+    // Tambahkan method show setelah method index
+    public function show($slug)
+    {
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return view('admin.posts.show', compact('post'));
     }
 
     // Fungsi untuk membuat post baru
@@ -36,6 +65,7 @@ class PostController extends Controller
         $post = new Post();
         $post->title = $request->input('title');
         $post->description = $request->input('description');
+        $post->user_id = auth()->id();
 
         // Simpan gambar jika ada
         if ($request->hasFile('image')) {
@@ -109,4 +139,6 @@ class PostController extends Controller
         // Redirect dengan pesan sukses
         return redirect()->route('admin.posts.index')->with('success', 'Post berhasil dihapus!');
     }
+
+    
 }

@@ -9,8 +9,13 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        // Ambil semua post dan urutkan dari yang terbaru
-        $posts = Post::orderBy('created_at', 'desc')->get();
+        $posts = Post::latest()->paginate(12);
         return view('customer.index', compact('posts'));
+    }
+
+    public function show($slug)
+    {
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return view('customer.show', compact('post'));
     }
 }

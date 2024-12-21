@@ -13,8 +13,9 @@ use App\Http\Controllers\CustomerController;
 | Define all routes for your application here.
 */
 
-// Landing Page untuk Customer
+// Landing Page dan Customer Routes (Tanpa Auth)
 Route::get('/', [CustomerController::class, 'index'])->name('home');
+Route::get('/posts/{slug}', [CustomerController::class, 'show'])->name('posts.show');
 
 // Auth Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -29,35 +30,25 @@ Route::prefix('auth')->group(function () {
 });
 
 // Admin Routes (Proteksi Auth)
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Posts Management
+    Route::resource('posts', PostController::class);
 
     // Users Management
-    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::resource('users', AdminController::class);
 
     // Settings
-    Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
-
-    // Post Management (Sub-Prefix)
-    Route::prefix('posts')->group(function () {
-        Route::get('/', [PostController::class, 'index'])->name('admin.posts.index');
-        Route::get('/create', [PostController::class, 'create'])->name('admin.posts.create');
-        Route::post('/', [PostController::class, 'store'])->name('admin.posts.store');
-        Route::get('/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
-        Route::put('/{id}', [PostController::class, 'update'])->name('admin.posts.update');
-        Route::delete('/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
-    });
-
-    Route::resource('posts', PostController::class)->names([
-        'index' => 'admin.posts.index',
-        'create' => 'admin.posts.create',
-        'store' => 'admin.posts.store',
-        'edit' => 'admin.posts.edit',
-        'update' => 'admin.posts.update',
-        'destroy' => 'admin.posts.destroy'
-    ]);
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 });
 
 // Fallback Post Route
 Route::get('/posts', [PostController::class, 'index'])->name('admin.posts');
+
+// Route::middleware(['auth', 'admin'])->group(function () {
+//     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+//     // ... route lainnya
+// });
+

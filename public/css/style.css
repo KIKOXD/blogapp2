@@ -33,17 +33,38 @@ body {
 }
 
 .search-container {
-    flex-grow: 1;
-    text-align: right;
-    margin-right: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
 }
 
 .search-box {
-    width: 80%;
-    max-width: 300px;
-    padding: 8px;
-    border-radius: 5px;
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 2px solid #003f7f;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
+    color: #003f7f;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.search-button:hover {
+    color: #002a5a;
 }
 
 /* Marquee Styling */
@@ -245,7 +266,8 @@ body {
     }
 
     .search-container {
-        margin: 10px 0;
+        max-width: 100%;
+        margin: 10px 15px;
     }
 
     .cards-container {
@@ -275,4 +297,160 @@ body {
     .cards-container {
         grid-template-columns: repeat(1, 1fr);
     }
+}
+
+/* Post Detail Styling */
+.post-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.post-detail {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.post-title {
+    font-size: 2rem;
+    color: #1e3a8a;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.post-meta {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.post-image {
+    width: 100%;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.post-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post-content {
+    line-height: 1.8;
+    color: #374151;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.post-navigation {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #003f7f;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #002a5a;
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 768px) {
+    .post-container {
+        padding: 0 10px;
+    }
+
+    .post-detail {
+        padding: 20px;
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+    }
+
+    .post-content {
+        padding: 0 10px;
+    }
+}
+
+/* Pagination Styling */
+.pagination {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    padding: 1px 4px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Menyembunyikan elemen yang tidak diinginkan */
+.pagination nav>div>p,
+.pagination nav>div>span:first-child,
+.pagination nav>div>span:last-child,
+.pagination nav>div>div:first-child {
+    display: none !important;
+}
+
+.pagination span,
+.pagination a {
+    display: inline-block;
+    padding: 1px 2px;
+    margin: 0 1px;
+    font-size: 11px;
+    color: #6b7280;
+    text-decoration: none;
+    border-radius: 2px;
+    min-width: 15px;
+    text-align: center;
+}
+
+.pagination svg {
+    width: 12px;
+    height: 12px;
+}
+
+.pagination>nav>div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+}
+
+.pagination a {
+    color: #003f7f;
+}
+
+.pagination a:hover {
+    background-color: #e5e7eb;
+}
+
+.pagination span[aria-current="page"] {
+    background-color: #003f7f;
+    color: white;
 }

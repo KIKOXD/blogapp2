@@ -38,6 +38,10 @@
     font-size: 14px;
     outline: none;
     transition: border-color 0.3s ease;
+
+        {
+         ! ! ! !
+    }
 }
 
 .form-group input:focus,
