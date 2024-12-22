@@ -15,7 +15,7 @@ class AdminController extends Controller
         $recentUsers = User::latest()->paginate(10);
         $recentPosts = Post::latest()->paginate(10);
         
-        return view('admin.dashboard', compact('totalUsers', 'totalPosts', 'recentUsers', 'recentPosts'));
+        return view('admin.dashboard.index', compact('totalUsers', 'totalPosts', 'recentUsers', 'recentPosts'));
     }
 
     public function users()
@@ -48,10 +48,5 @@ class AdminController extends Controller
     public function destroyUser($id)
     {
         // Logic untuk menghapus user
-    }
-
-    public function settings()
-    {
-        return view('admin.settings');
     }
 }

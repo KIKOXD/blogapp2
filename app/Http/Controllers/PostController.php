@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -67,33 +68,46 @@ class PostController extends Controller
     // Fungsi untuk menyimpan post baru
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|max:255',
             'description' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
-        // Buat instance baru Post
-        $post = new Post();
-        $post->title = $request->input('title');
-        $post->description = $request->input('description');
-        $post->user_id = auth()->id();
+        try {
+            // Upload gambar
+            $imagePath = $request->file('image')->store('posts', 'public');
 
-        // Simpan gambar jika ada
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images', 'public');
-            $post->image = $path;
+            // Generate slug dari title
+            $slug = Str::slug($request->title);
+            
+            // Pastikan slug unik
+            $count = 1;
+            while (Post::where('slug', $slug)->exists()) {
+                $slug = Str::slug($request->title) . '-' . $count;
+                $count++;
+            }
+
+            // Buat post baru
+            $post = Post::create([
+                'title' => $request->title,
+                'slug' => $slug,
+                'description' => $request->description,
+                'image' => $imagePath,
+                'user_id' => auth()->id(),
+                'is_active' => true
+            ]);
+
+            // Redirect ke halaman index dengan pesan sukses
+            return redirect()->route('admin.posts.index')
+                ->with('success', 'Postingan berhasil dibuat!');
+
+        } catch (\Exception $e) {
+            \Log::error('Error creating post: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Gagal membuat postingan: ' . $e->getMessage())
+                ->withInput();
         }
-
-        // Simpan data ke database
-        $post->save();
-
-        // Redirect ke halaman index dengan pesan sukses
-        return response()->json([
-            'success' => true,
-            'message' => 'Postingan berhasil dibuat!'
-        ]);
     }
 
     // Fungsi untuk menampilkan form edit
@@ -113,53 +127,63 @@ class PostController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        // Ambil post yang akan diupdate
-        $post = Post::findOrFail($id);
+        try {
+            // Ambil post yang akan diupdate
+            $post = Post::findOrFail($id);
 
-        // Update data
-        $post->title = $request->input('title');
-        $post->description = $request->input('description');
+            // Update data
+            $post->title = $request->input('title');
+            $post->description = $request->input('description');
 
-        // Update gambar jika ada
-        if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
-            if ($post->image && Storage::disk('public')->exists($post->image)) {
-                Storage::disk('public')->delete($post->image);
+            // Update gambar jika ada
+            if ($request->hasFile('image')) {
+                // Hapus gambar lama jika ada
+                if ($post->image && Storage::disk('public')->exists($post->image)) {
+                    Storage::disk('public')->delete($post->image);
+                }
+
+                // Upload gambar baru
+                $path = $request->file('image')->store('posts', 'public');
+                $post->image = $path;
             }
 
-            // Upload gambar baru
-            $path = $request->file('image')->store('images', 'public');
-            $post->image = $path;
+            // Simpan perubahan
+            $post->save();
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('admin.posts.index')
+                ->with('success', 'Postingan berhasil diperbarui!');
+
+        } catch (\Exception $e) {
+            \Log::error('Error updating post: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Gagal memperbarui postingan: ' . $e->getMessage())
+                ->withInput();
         }
-
-        // Simpan perubahan
-        $post->save();
-
-        // Redirect dengan pesan sukses
-        return response()->json([
-            'success' => true,
-            'message' => 'Postingan berhasil diperbarui!'
-        ]);
     }
 
     public function destroy($id)
     {
-        // Cari post berdasarkan ID
-        $post = Post::findOrFail($id);
+        try {
+            // Cari post berdasarkan ID
+            $post = Post::findOrFail($id);
 
-        // Hapus gambar dari storage jika ada
-        if ($post->image && Storage::disk('public')->exists($post->image)) {
-            Storage::disk('public')->delete($post->image);
+            // Hapus gambar dari storage jika ada
+            if ($post->image && Storage::disk('public')->exists($post->image)) {
+                Storage::disk('public')->delete($post->image);
+            }
+
+            // Hapus post dari database
+            $post->delete();
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('admin.posts.index')
+                ->with('success', 'Postingan berhasil dihapus!');
+            
+        } catch (\Exception $e) {
+            return redirect()->route('admin.posts.index')
+                ->with('error', 'Gagal menghapus postingan: ' . $e->getMessage());
         }
-
-        // Hapus post dari database
-        $post->delete();
-
-        // Redirect dengan pesan sukses
-        return response()->json([
-            'success' => true,
-            'message' => 'Postingan berhasil dihapus!'
-        ]);
     }
 
     public function bulkDelete(Request $request)

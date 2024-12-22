@@ -18,24 +18,19 @@ class AuthController extends Controller
     // Proses Login
     public function login(Request $request)
     {
-        // Validasi input form login
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
 
-        // Cek kredensial
-        $credentials = $request->only('email', 'password');
-
         if (Auth::attempt($credentials)) {
-            // Jika login berhasil, arahkan ke dashboard dan kirim notifikasi sukses
-            return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard');
         }
 
-        // Jika login gagal, kembali ke halaman login dengan error dan notifikasi gagal
-        return back()->withErrors(['email' => 'Invalid credentials.'])
-                    ->withInput()
-                    ->with('error', 'Login failed!');
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
 

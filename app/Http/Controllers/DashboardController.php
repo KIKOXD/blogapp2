@@ -43,7 +43,7 @@ class DashboardController extends Controller
             $counts[] = $stat->total;
         }
 
-        return view('admin.dashboard', compact(
+        return view('admin.dashboard.index', compact(
             'recentPosts',
             'recentUsers',
             'totalUsers',

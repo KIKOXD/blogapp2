@@ -1,14 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
-    const slides = document.querySelectorAll('.slide');
+    const slides = document.querySelectorAll('.slider-image');
     const totalSlides = slides.length;
 
+    // Sembunyikan semua slide kecuali yang pertama
+    slides.forEach((slide, index) => {
+        if (index !== 0) {
+            slide.style.display = 'none';
+        }
+    });
+
     function showNextSlide() {
-        slides.forEach((slide) => slide.classList.remove('active'));
-        slides[currentIndex].classList.add('active');
+        // Sembunyikan slide saat ini
+        slides[currentIndex].style.display = 'none';
+
+        // Update index ke slide berikutnya
         currentIndex = (currentIndex + 1) % totalSlides;
+
+        // Tampilkan slide berikutnya
+        slides[currentIndex].style.display = 'block';
     }
 
+    // Jalankan slider setiap 3 detik
     setInterval(showNextSlide, 3000);
-    slides[currentIndex].classList.add('active'); // Tampilkan slide pertama
 });

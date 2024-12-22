@@ -1,13 +1,14 @@
 @extends('admin.layouts.master')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="min-h-screen bg-gray-100">
     <div class="container mx-auto px-4 py-8">
         <!-- Animated Title -->
-        <div class="t-center mb-8">
+        <div class="text-center mb-8">
             <h1 class="animate-title text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 text-transparent bg-clip-text bg-300% animate-gradient">
                 Dashboard Admin
             </h1>
+            <div class="w-32 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mt-2 rounded-full animate-pulse"></div>
         </div>
 
         <!-- Cards -->
@@ -111,107 +112,6 @@
             <h2 class="text-lg font-semibold mb-4">Statistik Postingan 7 Hari Terakhir</h2>
             <div class="h-64" id="weeklyChart"></div>
         </div>
-
-        @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var options = {
-                    series: [{
-                        name: 'Jumlah Postingan',
-                        data: {!! json_encode($counts ?? [0,0,0,0,0,0,0]) !!}
-                    }],
-                    chart: {
-                        type: 'area',
-                        height: 250,
-                        toolbar: {
-                            show: false
-                        },
-                        animations: {
-                            enabled: true,
-                            easing: 'easeinout',
-                            speed: 800
-                        }
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 3
-                    },
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.7,
-                            opacityTo: 0.2,
-                            stops: [0, 90, 100],
-                            colorStops: [
-                                {
-                                    offset: 0,
-                                    color: '#4F46E5',
-                                    opacity: 0.8
-                                },
-                                {
-                                    offset: 100,
-                                    color: '#818CF8',
-                                    opacity: 0.2
-                                }
-                            ]
-                        }
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function(val) {
-                            return val + " post";
-                        },
-                        style: {
-                            fontSize: '12px',
-                            colors: ['#4F46E5']
-                        },
-                        background: {
-                            enabled: true,
-                            foreColor: '#fff',
-                            padding: 4,
-                            borderRadius: 4,
-                            borderWidth: 1,
-                            borderColor: '#4F46E5',
-                            opacity: 0.9
-                        }
-                    },
-                    xaxis: {
-                        categories: {!! json_encode($dates ?? ['Sen','Sel','Rab','Kam','Jum','Sab','Min']) !!},
-                        labels: {
-                            style: {
-                                colors: '#64748b',
-                                fontFamily: 'inherit'
-                            }
-                        }
-                    },
-                    yaxis: {
-                        labels: {
-                            formatter: function(val) {
-                                return Math.round(val)
-                            }
-                        }
-                    },
-                    tooltip: {
-                        theme: 'dark',
-                        y: {
-                            formatter: function(val) {
-                                return val + " postingan"
-                            }
-                        }
-                    },
-                    grid: {
-                        borderColor: '#f1f1f1',
-                        strokeDashArray: 4
-                    }
-                };
-
-                var chart = new ApexCharts(document.querySelector("#weeklyChart"), options);
-                chart.render();
-            });
-        </script>
-        @endpush
 
         <!-- Quick Actions Panel -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
@@ -336,51 +236,17 @@
     </div>
 </div>
 
+@push('scripts')
 <script>
-function openModal(imageSrc, imageAlt) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    modalImg.src = imageSrc;
-    modalImg.alt = imageAlt;
-}
-
-function closeModal() {
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('flex');
-    modal.classList.add('hidden');
-}
+    // Pass PHP variables to JavaScript
+    var dates = @json($dates);
+    var counts = @json($counts);
 </script>
+<script src="{{ asset('js/dashboard/dashboard.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+@endpush
 
-<style>
-    @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    .animate-gradient {
-        animation: gradient 3s ease infinite;
-    }
-
-    .bg-300\% {
-        background-size: 300% 300%;
-    }
-
-    @keyframes slideIn {
-        0% {
-            transform: translateY(-20px);
-            opacity: 0;
-        }
-        100% {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    .animate-title {
-        animation: slideIn 0.5s ease-out forwards;
-    }
-</style>
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/dashboard/dashboard.css') }}">
+@endpush
 @endsection
