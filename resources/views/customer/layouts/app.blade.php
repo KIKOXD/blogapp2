@@ -78,6 +78,9 @@
     <section class="slider">
         <div class="slider-container">
             @if(isset($settings))
+                <div class="slider-loading" id="sliderLoading">
+                    <div class="spinner"></div>
+                </div>
                 @for($i = 1; $i <= 3; $i++)
                     @if($settings->{"banner_$i"})
                         <img src="{{ asset('storage/' . $settings->{"banner_$i"}) }}" 
