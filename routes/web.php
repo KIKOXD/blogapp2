@@ -32,28 +32,40 @@ Route::prefix('auth')->group(function () {
 });
 
 // Admin Routes (Proteksi Auth)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Dashboard route setelah login
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     
     // Posts Management
-    Route::resource('posts', PostController::class);
-    Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
-    Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
+    Route::resource('posts', PostController::class)->names([
+        'index' => 'admin.posts.index',
+        'create' => 'admin.posts.create',
+        'store' => 'admin.posts.store',
+        'edit' => 'admin.posts.edit',
+        'update' => 'admin.posts.update',
+        'destroy' => 'admin.posts.destroy',
+    ]);
+    Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('admin.posts.bulk-delete');
+    Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('admin.posts.toggle-status');
     
     // Users Management
-    Route::resource('users', AdminController::class);
+    Route::resource('users', AdminController::class)->names([
+        'index' => 'admin.users.index',
+        'create' => 'admin.users.create',
+        'store' => 'admin.users.store',
+        'edit' => 'admin.users.edit',
+        'update' => 'admin.users.update',
+        'destroy' => 'admin.users.destroy',
+    ]);
     
     // Settings
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings');
-    Route::get('/settings/landing', [SettingController::class, 'landing'])->name('settings.landing');
-    Route::put('/settings/landing', [SettingController::class, 'updateLanding'])->name('settings.landing.update');
-    Route::get('/settings/dashboard', [SettingController::class, 'dashboard'])->name('settings.dashboard');
-
-    // // Bulk Actions
-    // Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
-    // Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
-
+    Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+    Route::get('/settings/landing', [SettingController::class, 'landing'])->name('admin.settings.landing');
+    Route::put('/settings/landing', [SettingController::class, 'landingUpdate'])->name('admin.settings.landing.update');
+    Route::get('/settings/dashboard', [SettingController::class, 'dashboard'])->name('admin.settings.dashboard');
+    Route::put('/settings/dashboard/update', [SettingController::class, 'dashboardUpdate'])->name('admin.settings.dashboard.update');
+    Route::get('/admin/settings/seo', [SettingController::class, 'seo'])->name('admin.settings.seo');
+    Route::put('/admin/settings/seo', [SettingController::class, 'seoUpdate'])->name('admin.settings.seo.update');
 });
 
 // Fallback Post Route
@@ -63,17 +75,3 @@ Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus
         ->name('posts.toggle-status');
 
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
-// Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
-//     // Bulk actions
-//     Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
-// });
-
-// Route::middleware(['auth'])->group(function () {
-//     Route::prefix('admin')->name('admin.')->group(function () {
-//         Route::patch('posts/bulk-activate', [PostController::class, 'bulkActivate'])->name('posts.bulk-activate');
-//         Route::patch('posts/bulk-deactivate', [PostController::class, 'bulkDeactivate'])->name('posts.bulk-deactivate');
-//         Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('posts.bulk-delete');
-//         Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('posts.toggle-status');
-//     });
-// });

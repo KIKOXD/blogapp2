@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - BlogApp</title>
+    
+    <!-- Dynamic Title from SEO Settings -->
+    @if(isset($settings) && $settings->meta_title)
+        <title>{{ $settings->meta_title }}</title>
+    @else
+        <title>{{ config('app.name') }}</title>
+    @endif
+
     @if(isset($settings) && $settings->favicon)
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
     @else
@@ -11,6 +18,37 @@
     @endif
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Meta Tags -->
+    @if($settings->meta_description)
+        <meta name="description" content="{{ $settings->meta_description }}">
+    @endif
+    
+    @if($settings->meta_keywords)
+        <meta name="keywords" content="{{ $settings->meta_keywords }}">
+    @endif
+    
+    <!-- Google Search Console Verification -->
+    @if($settings->google_search_console)
+        <meta name="google-site-verification" content="{{ $settings->google_search_console }}">
+    @endif
+    
+    <!-- Canonical URL -->
+    @if($settings->canonical_url)
+        <link rel="canonical" href="{{ $settings->canonical_url }}">
+        <meta property="og:url" content="{{ $settings->canonical_url }}">
+    @endif
+    
+    <!-- Google Analytics -->
+    @if($settings->google_analytics_id)
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $settings->google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ $settings->google_analytics_id }}');
+    </script>
+    @endif
 </head>
 <body>
     <header class="navbar">
@@ -99,6 +137,8 @@
             @endif
         </div>
     </section>
+
+    
 
     @yield('content')
 

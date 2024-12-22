@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    @if(isset($settings->favicon) && $settings->favicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $settings->favicon) }}">
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -19,11 +22,16 @@
     <div x-data="{ sidebarOpen: true }" class="min-h-screen flex">
         <!-- Sidebar -->
         <div :class="{'w-64': sidebarOpen, 'w-20': !sidebarOpen}" 
-             class="bg-gray-800 text-white transition-all duration-300 ease-in-out">
+             class="bg-gray-800 text-white transition-all duration-300 ease-in-out fixed top-0 left-0 h-screen z-30">
             <div class="p-4">
                 <div class="flex items-center justify-between">
-                    <img src="{{ asset('images/GIF-LOGO-MAHASLOT.gif') }}" alt="Logo" class="h-8" 
-                         :class="{'hidden': !sidebarOpen}">
+                    @if(isset($settings->dashboard_logo) && $settings->dashboard_logo)
+                        <img src="{{ asset('storage/' . $settings->dashboard_logo) }}" alt="Logo" class="h-8" 
+                             :class="{'hidden': !sidebarOpen}">
+                    @else
+                        <img src="{{ asset('images/GIF-LOGO-MAHASLOT.gif') }}" alt="Logo" class="h-8" 
+                             :class="{'hidden': !sidebarOpen}">
+                    @endif
                     <button @click="sidebarOpen = !sidebarOpen" class="text-white">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -75,8 +83,10 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1">
-            <header class="bg-white shadow">
+        <div :class="{'ml-64': sidebarOpen, 'ml-20': !sidebarOpen}" 
+             class="flex-1 flex flex-col transition-all duration-300">
+            <header class="bg-white shadow-sm fixed top-0 right-0 left-0 z-20" 
+                    :class="{'pl-64': sidebarOpen, 'pl-20': !sidebarOpen}">
                 <div class="flex justify-between items-center px-6 py-4">
                     <h2 class="text-xl font-semibold text-gray-800">Admin Dashboard</h2>
                     <div class="flex items-center space-x-4">
@@ -95,7 +105,7 @@
                 </div>
             </header>
 
-            <main class="p-6">
+            <main class="p-6 mt-16">
                 @yield('content')
             </main>
         </div>

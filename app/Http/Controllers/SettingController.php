@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class SettingController extends Controller
 {
@@ -19,27 +20,27 @@ class SettingController extends Controller
         return view('admin.settings.landing', compact('settings'));
     }
 
-    public function updateLanding(Request $request)
+    public function landingUpdate(Request $request)
     {
         $request->validate([
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'marquee_text' => 'nullable|string',
             'banner_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'banner_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'banner_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'favicon' => 'nullable|image|mimes:ico,png|max:1024',
+            'marquee_text' => 'nullable|string',
             'footer_article' => 'nullable|string',
-            'footer_text' => 'nullable|string|max:255',
+            'footer_text' => 'nullable|string',
             'whatsapp_link' => 'nullable|string',
             'instagram_link' => 'nullable|string',
             'facebook_link' => 'nullable|string',
+            'jackpot_text' => 'nullable|string|max:255',
         ]);
 
         $settings = Setting::firstOrNew();
 
         // Handle Logo Upload
         if ($request->hasFile('logo')) {
-            // Hapus logo lama jika ada
             if ($settings->logo) {
                 Storage::disk('public')->delete($settings->logo);
             }
@@ -49,7 +50,6 @@ class SettingController extends Controller
         // Handle Banner Uploads
         for ($i = 1; $i <= 3; $i++) {
             if ($request->hasFile("banner_$i")) {
-                // Hapus banner lama jika ada
                 if ($settings->{"banner_$i"}) {
                     Storage::disk('public')->delete($settings->{"banner_$i"});
                 }
@@ -72,12 +72,13 @@ class SettingController extends Controller
         $settings->whatsapp_link = $request->whatsapp_link;
         $settings->instagram_link = $request->instagram_link;
         $settings->facebook_link = $request->facebook_link;
+        $settings->jackpot_text = $request->jackpot_text;
 
         // Handle navbar buttons
         if ($request->has('button_text') && $request->has('button_url')) {
             $buttons = [];
             foreach ($request->button_text as $index => $text) {
-                if (!empty($text)) { // Hanya simpan jika ada teks tombol
+                if (!empty($text)) {
                     $buttons[] = [
                         'text' => $text,
                         'url' => $request->button_url[$index] ?? '#'
@@ -85,12 +86,6 @@ class SettingController extends Controller
                 }
             }
             $settings->navbar_buttons = !empty($buttons) ? json_encode($buttons) : null;
-        } else {
-            // Set default buttons jika tidak ada input
-            $settings->navbar_buttons = json_encode([
-                ['text' => 'Daftar Sekarang', 'url' => '#'],
-                ['text' => 'Login Member', 'url' => '#']
-            ]);
         }
 
         $settings->save();
@@ -103,5 +98,77 @@ class SettingController extends Controller
     {
         $settings = Setting::first();
         return view('admin.settings.dashboard', compact('settings'));
+    }
+
+    public function dashboardUpdate(Request $request)
+    {
+        $request->validate([
+            'dashboard_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'favicon' => 'nullable|image|mimes:ico,png|max:1024',
+        ]);
+
+        $settings = Setting::firstOrNew();
+
+        // Handle Dashboard Logo Upload
+        if ($request->hasFile('dashboard_logo')) {
+            if ($settings->dashboard_logo) {
+                Storage::disk('public')->delete($settings->dashboard_logo);
+            }
+            $settings->dashboard_logo = $request->file('dashboard_logo')->store('settings', 'public');
+        }
+
+        // Handle Favicon Upload
+        if ($request->hasFile('favicon')) {
+            if ($settings->favicon) {
+                Storage::disk('public')->delete($settings->favicon);
+            }
+            $settings->favicon = $request->file('favicon')->store('settings', 'public');
+        }
+
+        $settings->save();
+
+        return redirect()->route('admin.settings.dashboard')
+            ->with('success', 'Pengaturan dashboard berhasil diperbarui');
+    }
+
+    public function seo()
+    {
+        $settings = Setting::first();
+        return view('admin.settings.seo', compact('settings'));
+    }
+
+    public function seoUpdate(Request $request)
+    {
+        $request->validate([
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'meta_keywords' => 'nullable|string',
+            'google_analytics_id' => 'nullable|string|max:20',
+            'google_search_console' => 'nullable|string',
+            'robots_txt' => 'nullable|string',
+            'sitemap_xml' => 'nullable|string|url',
+            'canonical_url' => 'nullable|string|url',
+        ]);
+
+        $settings = Setting::firstOrNew();
+        
+        $settings->meta_title = $request->meta_title;
+        $settings->meta_description = $request->meta_description;
+        $settings->meta_keywords = $request->meta_keywords;
+        $settings->google_analytics_id = $request->google_analytics_id;
+        $settings->google_search_console = $request->google_search_console;
+        $settings->robots_txt = $request->robots_txt;
+        $settings->sitemap_xml = $request->sitemap_xml;
+        $settings->canonical_url = $request->canonical_url;
+        
+        $settings->save();
+
+        // Generate robots.txt file
+        if ($request->robots_txt) {
+            File::put(public_path('robots.txt'), $request->robots_txt);
+        }
+
+        return redirect()->route('admin.settings.seo')
+            ->with('success', 'Pengaturan SEO berhasil diperbarui');
     }
 }
