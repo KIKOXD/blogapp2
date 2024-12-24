@@ -75,3 +75,5 @@ Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus
         ->name('posts.toggle-status');
 
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+Route::post('/admin/upload/image', [SettingController::class, 'uploadImage'])->name('admin.upload.image');

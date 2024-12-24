@@ -56,7 +56,7 @@ class PostController extends Controller
     public function show($slug)
     {
         $post = Post::where('slug', $slug)->firstOrFail();
-        return view('admin.posts.show', compact('post'));
+        return view('customer.show', compact('post'));
     }
 
     // Fungsi untuk membuat post baru

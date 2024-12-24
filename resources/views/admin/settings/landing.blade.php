@@ -239,15 +239,6 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
-    tinymce.init({
-        selector: '.tinymce-editor',
-        plugins: 'link lists headings code table',
-        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | indent outdent | bullist numlist | link | removeformat',
-        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
-    });
-</script>
 <script>
     $(document).ready(function() {
         $('#summernote').summernote({
@@ -265,41 +256,37 @@
             ],
             styleTags: [
                 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
-            ]
+            ],
+            callbacks: {
+                onImageUpload: function(files) {
+                    // Handle image upload if needed
+                    for(let i=0; i < files.length; i++) {
+                        uploadImage(files[i]);
+                    }
+                }
+            }
         });
     });
-</script>
-<script>
-document.getElementById('add-button').addEventListener('click', function() {
-    const container = document.getElementById('button-container');
-    const buttonCount = container.getElementsByClassName('button-group').length;
-    
-    const newButton = document.createElement('div');
-    newButton.className = 'mb-4 button-group flex gap-4';
-    newButton.innerHTML = `
-        <div class="flex-1">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Tombol ${buttonCount + 1}
-            </label>
-            <input type="text" name="button_text[]" 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   placeholder="Teks tombol">
-            <input type="text" name="button_url[]"
-                   class="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   placeholder="URL tombol (contoh: https://example.com)">
-        </div>
-        <button type="button" class="remove-button text-red-600 hover:text-red-800 mt-8">
-            <i class="fas fa-trash"></i>
-        </button>
-    `;
-    
-    container.appendChild(newButton);
-});
 
-document.getElementById('button-container').addEventListener('click', function(e) {
-    if (e.target.closest('.remove-button')) {
-        e.target.closest('.button-group').remove();
+    function uploadImage(file) {
+        let formData = new FormData();
+        formData.append('image', file);
+        formData.append('_token', '{{ csrf_token() }}');
+
+        $.ajax({
+            url: '{{ route("admin.upload.image") }}',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#summernote').summernote('insertImage', response.url);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error uploading image:', error);
+                alert('Gagal mengupload gambar');
+            }
+        });
     }
-});
 </script>
 @endpush

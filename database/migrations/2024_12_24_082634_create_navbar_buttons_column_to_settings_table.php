@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->boolean('is_active')->default(true)->after('description');
+        Schema::table('settings', function (Blueprint $table) {
+            $table->text('navbar_buttons')->nullable()->after('logo');
         });
     }
 
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('is_active');
+        Schema::table('settings', function (Blueprint $table) {
+            $table->dropColumn('navbar_buttons');
         });
     }
-}; 
+};

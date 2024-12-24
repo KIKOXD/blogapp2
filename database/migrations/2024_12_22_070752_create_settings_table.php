@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('logo')->nullable();
+            $table->string('dashboard_logo')->nullable();
+            $table->string('favicon')->nullable();
             $table->text('marquee_text')->nullable();
             $table->string('banner_1')->nullable();
             $table->string('banner_2')->nullable();
             $table->string('banner_3')->nullable();
-            $table->string('favicon')->nullable();
             $table->text('footer_article')->nullable();
             $table->string('footer_text')->nullable();
             $table->timestamps();

@@ -171,4 +171,15 @@ class SettingController extends Controller
         return redirect()->route('admin.settings.seo')
             ->with('success', 'Pengaturan SEO berhasil diperbarui');
     }
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('settings/images', 'public');
+            return response()->json([
+                'url' => asset('storage/' . $path)
+            ]);
+        }
+        return response()->json(['error' => 'No image found.'], 400);
+    }
 }
