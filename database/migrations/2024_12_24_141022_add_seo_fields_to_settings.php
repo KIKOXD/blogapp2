@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
@@ -13,11 +12,11 @@ return new class extends Migration
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();
-            
+
             // Analytics & Verification
             $table->string('google_analytics_id')->nullable();
             $table->string('google_search_console')->nullable();
-            
+
             // Technical SEO
             $table->text('robots_txt')->nullable();
             $table->string('sitemap_xml')->nullable();
@@ -40,4 +39,4 @@ return new class extends Migration
             ]);
         });
     }
-}; 
+};

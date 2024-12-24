@@ -14,7 +14,7 @@ class AdminController extends Controller
         $totalPosts = Post::count();
         $recentUsers = User::latest()->paginate(10);
         $recentPosts = Post::latest()->paginate(10);
-        
+
         return view('admin.dashboard.index', compact('totalUsers', 'totalPosts', 'recentUsers', 'recentPosts'));
     }
 

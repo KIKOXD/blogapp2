@@ -151,7 +151,7 @@ class SettingController extends Controller
         ]);
 
         $settings = Setting::firstOrNew();
-        
+
         $settings->meta_title = $request->meta_title;
         $settings->meta_description = $request->meta_description;
         $settings->meta_keywords = $request->meta_keywords;
@@ -160,7 +160,7 @@ class SettingController extends Controller
         $settings->robots_txt = $request->robots_txt;
         $settings->sitemap_xml = $request->sitemap_xml;
         $settings->canonical_url = $request->canonical_url;
-        
+
         $settings->save();
 
         // Generate robots.txt file
@@ -181,5 +181,43 @@ class SettingController extends Controller
             ]);
         }
         return response()->json(['error' => 'No image found.'], 400);
+    }
+
+    public function theme()
+    {
+        $settings = Setting::first();
+        return view('admin.settings.theme', compact('settings'));
+    }
+
+    public function themeUpdate(Request $request)
+    {
+        $settings = Setting::firstOrNew();
+
+        // Section colors
+        $settings->background_color = $request->background_color;
+        $settings->section_color = $request->section_color;
+
+        // Card colors
+        $settings->card_background_color = $request->card_background_color;
+        $settings->card_text_primary_color = $request->card_text_primary_color;
+        $settings->card_text_secondary_color = $request->card_text_secondary_color;
+        $settings->card_button_color = $request->card_button_color;
+        $settings->card_button_hover_color = $request->card_button_hover_color;
+        $settings->card_date_color = $request->card_date_color;
+
+        // Text colors
+        $settings->text_primary_color = $request->text_primary_color;
+        $settings->text_secondary_color = $request->text_secondary_color;
+        $settings->text_accent_color = $request->text_accent_color;
+
+        // Other colors
+        $settings->primary_color = $request->primary_color;
+        $settings->secondary_color = $request->secondary_color;
+        $settings->primary_font = $request->primary_font;
+
+        $settings->save();
+
+        return redirect()->route('admin.settings.theme')
+            ->with('success', 'Pengaturan theme berhasil diperbarui');
     }
 }

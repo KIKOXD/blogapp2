@@ -10,11 +10,11 @@ class CustomerController extends Controller
     public function index()
     {
         $posts = Post::where('is_active', true)
-                     ->latest()
-                     ->paginate(12);
-                     
+            ->latest()
+            ->paginate(12);
+
         $totalPosts = Post::where('is_active', true)->count();
-                 
+
         return view('customer.index', compact('posts', 'totalPosts'));
     }
 

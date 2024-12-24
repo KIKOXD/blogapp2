@@ -7,7 +7,6 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,23 +30,24 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-// Admin Routes (Proteksi Auth)
+// Admin Routes
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Dashboard route setelah login
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-    
-    // Posts Management
-    Route::resource('posts', PostController::class)->names([
-        'index' => 'admin.posts.index',
-        'create' => 'admin.posts.create',
-        'store' => 'admin.posts.store',
-        'edit' => 'admin.posts.edit',
-        'update' => 'admin.posts.update',
-        'destroy' => 'admin.posts.destroy',
-    ]);
+    // Route::get('/dashboard/posts', [PostController::class, 'index'])->name('admin.posts');
+
+    // Posts Management tanpa show route
+    Route::get('/posts', [PostController::class, 'index'])->name('admin.posts.index');
+    Route::get('/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('admin.posts.store');
+    Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
+    Route::patch('/posts/{post}', [PostController::class, 'update'])->name('admin.posts.update');
+    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+
+    // Bulk delete dan toggle status
     Route::delete('posts/bulk-delete', [PostController::class, 'bulkDelete'])->name('admin.posts.bulk-delete');
     Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])->name('admin.posts.toggle-status');
-    
+
     // Users Management
     Route::resource('users', AdminController::class)->names([
         'index' => 'admin.users.index',
@@ -57,23 +57,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'update' => 'admin.users.update',
         'destroy' => 'admin.users.destroy',
     ]);
-    
+
+    Route::post('/upload/image', [SettingController::class, 'uploadImage'])->name('admin.upload.image');
+
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
     Route::get('/settings/landing', [SettingController::class, 'landing'])->name('admin.settings.landing');
     Route::put('/settings/landing', [SettingController::class, 'landingUpdate'])->name('admin.settings.landing.update');
     Route::get('/settings/dashboard', [SettingController::class, 'dashboard'])->name('admin.settings.dashboard');
     Route::put('/settings/dashboard/update', [SettingController::class, 'dashboardUpdate'])->name('admin.settings.dashboard.update');
-    Route::get('/admin/settings/seo', [SettingController::class, 'seo'])->name('admin.settings.seo');
-    Route::put('/admin/settings/seo', [SettingController::class, 'seoUpdate'])->name('admin.settings.seo.update');
+    Route::get('/settings/seo', [SettingController::class, 'seo'])->name('admin.settings.seo');
+    Route::put('/settings/seo', [SettingController::class, 'seoUpdate'])->name('admin.settings.seo.update');
+    Route::get('/settings/theme', [SettingController::class, 'theme'])->name('admin.settings.theme');
+    Route::put('/settings/theme', [SettingController::class, 'themeUpdate'])->name('admin.settings.theme.update');
 });
-
-// Fallback Post Route
-Route::get('/posts', [PostController::class, 'index'])->name('admin.posts');
-
-Route::patch('posts/{post}/toggle-status', [PostController::class, 'toggleStatus'])
-        ->name('posts.toggle-status');
-
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
-Route::post('/admin/upload/image', [SettingController::class, 'uploadImage'])->name('admin.upload.image');
